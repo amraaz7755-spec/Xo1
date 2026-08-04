@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ultimate Tic Tac Toe - اللعبة العالمية</title>
+    <title>Ultimate Tic Tac Toe Pro</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-color: #0f172a;
-            --card-bg: rgba(30, 41, 59, 0.7);
+            --card-bg: rgba(30, 41, 59, 0.8);
             --accent-x: #ff4757;
             --accent-o: #2ed573;
-            --neon-glow-x: rgba(255, 71, 87, 0.4);
-            --neon-glow-o: rgba(46, 213, 115, 0.4);
+            --neon-glow-x: rgba(255, 71, 87, 0.5);
+            --neon-glow-o: rgba(46, 213, 115, 0.5);
             --text-color: #f8fafc;
         }
 
@@ -31,7 +31,7 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            overflow: hidden;
+            padding: 20px;
         }
 
         .game-container {
@@ -39,14 +39,13 @@
             backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 24px;
-            padding: 30px;
+            padding: 25px;
             width: 100%;
-            max-width: 450px;
+            max-width: 520px;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
             display: flex;
             flex-direction: column;
             align-items: center;
-            position: relative;
         }
 
         h1 {
@@ -55,36 +54,44 @@
             background: linear-gradient(to right, var(--accent-x), var(--accent-o));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             letter-spacing: 1px;
+            text-align: center;
         }
 
-        /* اختيار نمط اللعب */
-        .mode-selector {
+        /* قوائم خيارات اللعبة */
+        .settings-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        .control-group {
             display: flex;
             background: rgba(15, 23, 42, 0.6);
             border-radius: 12px;
             padding: 4px;
-            margin-bottom: 20px;
-            width: 100%;
         }
 
-        .mode-btn {
+        .opt-btn {
             flex: 1;
-            padding: 10px;
+            padding: 8px 5px;
             border: none;
             background: transparent;
             color: #94a3b8;
             font-weight: 700;
+            font-size: 0.85rem;
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s ease;
         }
 
-        .mode-btn.active {
+        .opt-btn.active {
             background: #334155;
             color: #fff;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
         }
 
         /* لوحة النتيجة */
@@ -92,106 +99,87 @@
             display: flex;
             justify-content: space-between;
             width: 100%;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             background: rgba(15, 23, 42, 0.4);
-            padding: 12px 20px;
+            padding: 10px 20px;
             border-radius: 16px;
         }
 
-        .score-box {
-            text-align: center;
-        }
-
-        .score-box .label {
-            font-size: 0.85rem;
-            color: #94a3b8;
-        }
-
-        .score-box .val {
-            font-size: 1.5rem;
-            font-weight: 700;
-        }
-
+        .score-box { text-align: center; }
+        .score-box .label { font-size: 0.8rem; color: #94a3b8; }
+        .score-box .val { font-size: 1.3rem; font-weight: 700; }
         .score-box.x .val { color: var(--accent-x); }
         .score-box.o .val { color: var(--accent-o); }
 
         /* حالة اللعبة */
         .status {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: 700;
-            margin-bottom: 20px;
-            height: 32px;
+            margin-bottom: 15px;
+            height: 28px;
             display: flex;
             align-items: center;
         }
 
-        /* شبكة اللعب */
+        /* شبكة اللعب الديناميكية */
         .board {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
+            gap: 8px;
             width: 100%;
             aspect-ratio: 1;
+            background: rgba(15, 23, 42, 0.3);
+            padding: 10px;
+            border-radius: 16px;
         }
 
         .cell {
-            background: rgba(51, 65, 85, 0.4);
+            background: rgba(51, 65, 85, 0.5);
             border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 16px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 3rem;
             font-weight: 900;
-            cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .cell:hover {
-            background: rgba(51, 65, 85, 0.8);
-            transform: translateY(-2px);
-        }
-
-        .cell.x {
-            color: var(--accent-x);
-            text-shadow: 0 0 15px var(--neon-glow-x);
-            animation: popIn 0.3s ease;
-        }
-
-        .cell.o {
-            color: var(--accent-o);
-            text-shadow: 0 0 15px var(--neon-glow-o);
-            animation: popIn 0.3s ease;
-        }
-
-        .cell.winner {
-            background: rgba(255, 255, 255, 0.15);
-            animation: pulse 1s infinite alternate;
-        }
-
-        /* أزرار التحكم */
-        .controls {
-            display: flex;
-            gap: 10px;
-            width: 100%;
-            margin-top: 25px;
-        }
-
-        .btn {
-            flex: 1;
-            padding: 14px;
-            border: none;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 700;
             cursor: pointer;
             transition: all 0.2s ease;
         }
 
+        .cell:hover {
+            background: rgba(51, 65, 85, 0.85);
+            transform: scale(0.97);
+        }
+
+        .cell.x {
+            color: var(--accent-x);
+            text-shadow: 0 0 12px var(--neon-glow-x);
+            animation: popIn 0.25s ease;
+        }
+
+        .cell.o {
+            color: var(--accent-o);
+            text-shadow: 0 0 12px var(--neon-glow-o);
+            animation: popIn 0.25s ease;
+        }
+
+        .cell.winner {
+            background: rgba(255, 255, 255, 0.2);
+            animation: pulse 0.8s infinite alternate;
+        }
+
+        /* زر إعادة اللعب */
         .btn-reset {
+            width: 100%;
+            margin-top: 20px;
+            padding: 12px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 700;
             background: linear-gradient(135deg, #3b82f6, #1d4ed8);
             color: white;
+            cursor: pointer;
             box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+            transition: all 0.2s ease;
         }
 
         .btn-reset:hover {
@@ -201,7 +189,6 @@
 
         @keyframes popIn {
             0% { transform: scale(0); opacity: 0; }
-            80% { transform: scale(1.1); }
             100% { transform: scale(1); opacity: 1; }
         }
 
@@ -214,12 +201,28 @@
 <body>
 
     <div class="game-container">
-        <h1>TIC TAC TOE</h1>
+        <h1>XO PRO MULTI-GRID</h1>
 
-        <!-- نمط اللعب -->
-        <div class="mode-selector">
-            <button class="mode-btn active" id="btnPvp">لاعب ضد لاعب</button>
-            <button class="mode-btn" id="btnAi">ضد الذكاء الاصطناعي</button>
+        <div class="settings-grid">
+            <!-- نمط اللعب -->
+            <div class="control-group" id="modeGroup">
+                <button class="opt-btn active" data-value="pvp">لاعب ضد لاعب</button>
+                <button class="opt-btn" data-value="ai">ضد الذكاء الاصطناعي</button>
+            </div>
+
+            <!-- حجم الشبكة (المضاعفات المطلوبة) -->
+            <div class="control-group" id="sizeGroup">
+                <button class="opt-btn active" data-size="4">4x4</button>
+                <button class="opt-btn" data-size="5">5x5</button>
+                <button class="opt-btn" data-size="6">6x6</button>
+            </div>
+
+            <!-- مستويات الصعوبة للذكاء الاصطناعي -->
+            <div class="control-group" id="diffGroup" style="display: none;">
+                <button class="opt-btn active" data-diff="easy">بسيط</button>
+                <button class="opt-btn" data-diff="medium">متوسط</button>
+                <button class="opt-btn" data-diff="hard">صعب</button>
+            </div>
         </div>
 
         <!-- لوحة النتيجة -->
@@ -242,76 +245,134 @@
         <div class="status" id="status">دور اللاعب: <span style="color:var(--accent-x); margin-right:5px;">X</span></div>
 
         <!-- شبكة اللعب -->
-        <div class="board" id="board">
-            <div class="cell" data-index="0"></div>
-            <div class="cell" data-index="1"></div>
-            <div class="cell" data-index="2"></div>
-            <div class="cell" data-index="3"></div>
-            <div class="cell" data-index="4"></div>
-            <div class="cell" data-index="5"></div>
-            <div class="cell" data-index="6"></div>
-            <div class="cell" data-index="7"></div>
-            <div class="cell" data-index="8"></div>
-        </div>
+        <div class="board" id="board"></div>
 
-        <!-- أزرار التحكم -->
-        <div class="controls">
-            <button class="btn btn-reset" id="restartBtn">جولة جديدة</button>
-        </div>
+        <button class="btn-reset" id="restartBtn">جولة جديدة</button>
     </div>
 
     <script>
-        const cells = document.querySelectorAll('.cell');
-        const statusText = document.querySelector('#status');
-        const restartBtn = document.querySelector('#restartBtn');
-        const btnPvp = document.querySelector('#btnPvp');
-        const btnAi = document.querySelector('#btnAi');
-        const scoreXEl = document.querySelector('#scoreX');
-        const scoreOEl = document.querySelector('#scoreO');
-        const scoreTiesEl = document.querySelector('#scoreTies');
-        const labelO = document.querySelector('#labelO');
+        const boardEl = document.getElementById('board');
+        const statusText = document.getElementById('status');
+        const restartBtn = document.getElementById('restartBtn');
+        const diffGroup = document.getElementById('diffGroup');
+        const scoreXEl = document.getElementById('scoreX');
+        const scoreOEl = document.getElementById('scoreO');
+        const scoreTiesEl = document.getElementById('scoreTies');
+        const labelO = document.getElementById('labelO');
 
-        let boardState = ["", "", "", "", "", "", "", "", ""];
+        let boardSize = 4;
+        let winSequenceLength = 4; // مطلوب 4 أسطر متتالية للفوز في شبكات المضاعفات
+        let boardState = [];
         let currentPlayer = "X";
         let isGameActive = true;
         let isAiMode = false;
-        
+        let aiDifficulty = "easy";
         let scores = { X: 0, O: 0, ties: 0 };
+        let winningConditions = [];
 
-        const winningConditions = [
-            [0, 1, 2], [3, 4, 5], [6, 7, 8],
-            [0, 3, 6], [1, 4, 7], [2, 5, 8],
-            [0, 4, 8], [2, 4, 6]
-        ];
-
-        // التبديل بين الأنماط
-        btnPvp.addEventListener('click', () => setGameMode(false));
-        btnAi.addEventListener('click', () => setGameMode(true));
-
-        function setGameMode(aiMode) {
-            isAiMode = aiMode;
-            btnPvp.classList.toggle('active', !aiMode);
-            btnAi.classList.toggle('active', aiMode);
-            labelO.textContent = aiMode ? "الذكاء الاصطناعي" : "اللاعب O";
+        // إعداد أزرار التبديل
+        setupOptionGroup('modeGroup', (val) => {
+            isAiMode = (val === 'ai');
+            diffGroup.style.display = isAiMode ? 'flex' : 'none';
+            labelO.textContent = isAiMode ? "الذكاء الاصطناعي" : "اللاعب O";
             resetScores();
-            restartGame();
+            initGame();
+        });
+
+        setupOptionGroup('sizeGroup', (val) => {
+            boardSize = parseInt(val);
+            resetScores();
+            initGame();
+        });
+
+        setupOptionGroup('diffGroup', (val) => {
+            aiDifficulty = val;
+            resetScores();
+            initGame();
+        });
+
+        function setupOptionGroup(groupId, callback) {
+            const container = document.getElementById(groupId);
+            container.querySelectorAll('.opt-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    container.querySelectorAll('.opt-btn').forEach(b => b.classList.remove('active'));
+                    e.target.classList.add('active');
+                    callback(e.target.dataset.value || e.target.dataset.size || e.target.dataset.diff);
+                });
+            });
+        }
+
+        // إعداد شبكة اللعب وحساب خطوط الفوز
+        function initGame() {
+            boardState = Array(boardSize * boardSize).fill("");
+            currentPlayer = "X";
+            isGameActive = true;
+            statusText.innerHTML = `دور اللاعب: <span style="color:var(--accent-x); margin-right:5px;">X</span>`;
+            
+            generateWinningConditions();
+            renderBoard();
+        }
+
+        function generateWinningConditions() {
+            winningConditions = [];
+            const n = boardSize;
+            const k = winSequenceLength;
+
+            // الصفوف والأعمدة
+            for (let r = 0; r < n; r++) {
+                for (let c = 0; c <= n - k; c++) {
+                    let rowWin = [], colWin = [];
+                    for (let i = 0; i < k; i++) {
+                        rowWin.push(r * n + (c + i));
+                        colWin.push((c + i) * n + r);
+                    }
+                    winningConditions.push(rowWin, colWin);
+                }
+            }
+
+            // الأقطار
+            for (let r = 0; r <= n - k; r++) {
+                for (let c = 0; c <= n - k; c++) {
+                    let diag1 = [], diag2 = [];
+                    for (let i = 0; i < k; i++) {
+                        diag1.push((r + i) * n + (c + i));
+                        diag2.push((r + i) * n + (c + k - 1 - i));
+                    }
+                    winningConditions.push(diag1, diag2);
+                }
+            }
+        }
+
+        function renderBoard() {
+            boardEl.innerHTML = "";
+            boardEl.style.gridTemplateColumns = `repeat(${boardSize}, 1fr)`;
+            
+            let fontSize = boardSize === 4 ? "2rem" : boardSize === 5 ? "1.6rem" : "1.2rem";
+
+            for (let i = 0; i < boardSize * boardSize; i++) {
+                const cell = document.createElement('div');
+                cell.classList.add('cell');
+                cell.dataset.index = i;
+                cell.style.fontSize = fontSize;
+                cell.addEventListener('click', handleCellClick);
+                boardEl.appendChild(cell);
+            }
         }
 
         function handleCellClick(e) {
-            const index = e.target.getAttribute('data-index');
-
+            const index = e.target.dataset.index;
             if (boardState[index] !== "" || !isGameActive) return;
 
             makeMove(index, currentPlayer);
 
             if (isGameActive && isAiMode && currentPlayer === "O") {
-                setTimeout(makeAiMove, 400); // تأخير بسيط لمحاكاة تفكير الذكاء الاصطناعي
+                setTimeout(makeAiMove, 300);
             }
         }
 
         function makeMove(index, player) {
             boardState[index] = player;
-            const cell = cells[index];
+            const cell = boardEl.children[index];
             cell.textContent = player;
             cell.classList.add(player.toLowerCase());
 
@@ -329,8 +390,11 @@
             let winningCombo = [];
 
             for (let condition of winningConditions) {
-                const [a, b, c] = condition;
-                if (boardState[a] && boardState[a] === boardState[b] && boardState[a] === boardState[c]) {
+                let firstVal = boardState[condition[0]];
+                if (!firstVal) continue;
+
+                let isWin = condition.every(idx => boardState[idx] === firstVal);
+                if (isWin) {
                     roundWon = true;
                     winningCombo = condition;
                     break;
@@ -340,9 +404,7 @@
             if (roundWon) {
                 const color = currentPlayer === "X" ? "var(--accent-x)" : "var(--accent-o)";
                 statusText.innerHTML = `🎉 الفائز هو: <span style="color:${color}; margin-right:5px;">${currentPlayer}</span>!`;
-                
-                winningCombo.forEach(idx => cells[idx].classList.add('winner'));
-                
+                winningCombo.forEach(idx => boardEl.children[idx].classList.add('winner'));
                 scores[currentPlayer]++;
                 updateScoreboard();
                 isGameActive = false;
@@ -360,70 +422,65 @@
             changePlayer();
         }
 
-        /* خوارزمية Minimax للذكاء الاصطناعي (مستوى ذكاء لا يُقهر) */
+        /* خوارزميات الذكاء الاصطناعي بحسب المستويات (بسيط / متوسط / صعب) */
         function makeAiMove() {
-            let bestScore = -Infinity;
-            let bestMove;
+            let emptyIndices = boardState.map((val, idx) => val === "" ? idx : null).filter(val => val !== null);
+            if (emptyIndices.length === 0) return;
 
-            for (let i = 0; i < 9; i++) {
-                if (boardState[i] === "") {
-                    boardState[i] = "O";
-                    let score = minimax(boardState, 0, false);
-                    boardState[i] = "";
-                    if (score > bestScore) {
-                        bestScore = score;
-                        bestMove = i;
-                    }
-                }
-            }
-
-            if (bestMove !== undefined) {
-                makeMove(bestMove, "O");
-            }
-        }
-
-        function minimax(board, depth, isMaximizing) {
-            let result = checkWinnerForMinimax();
-            if (result !== null) {
-                return scoresMap[result];
-            }
-
-            if (isMaximizing) {
-                let bestScore = -Infinity;
-                for (let i = 0; i < 9; i++) {
-                    if (board[i] === "") {
-                        board[i] = "O";
-                        let score = minimax(board, depth + 1, false);
-                        board[i] = "";
-                        bestScore = Math.max(score, bestScore);
-                    }
-                }
-                return bestScore;
+            let move;
+            if (aiDifficulty === "easy") {
+                // بسيط: حركات عشوائية
+                move = getRandomMove(emptyIndices);
+            } else if (aiDifficulty === "medium") {
+                // متوسط: 50% تكتيك وتفكير و 50% حركات عشوائية
+                move = Math.random() < 0.5 ? getBestMove(emptyIndices) : getRandomMove(emptyIndices);
             } else {
-                let bestScore = Infinity;
-                for (let i = 0; i < 9; i++) {
-                    if (board[i] === "") {
-                        board[i] = "X";
-                        let score = minimax(board, depth + 1, true);
-                        board[i] = "";
-                        bestScore = Math.min(score, bestScore);
-                    }
-                }
-                return bestScore;
+                // صعب: أقصى تكتيك ومنع المنافس مباشرة
+                move = getBestMove(emptyIndices);
             }
+
+            makeMove(move, "O");
         }
 
-        const scoresMap = { O: 10, X: -10, tie: 0 };
+        function getRandomMove(emptyIndices) {
+            return emptyIndices[Math.floor(Math.random() * emptyIndices.length)];
+        }
 
-        function checkWinnerForMinimax() {
+        function getBestMove(emptyIndices) {
+            // 1. الفوز المباشر إذا توفرت الفرصة
             for (let condition of winningConditions) {
-                const [a, b, c] = condition;
-                if (boardState[a] && boardState[a] === boardState[b] && boardState[a] === boardState[c]) {
-                    return boardState[a];
+                let countO = 0, emptyIdx = -1;
+                condition.forEach(idx => {
+                    if (boardState[idx] === "O") countO++;
+                    else if (boardState[idx] === "") emptyIdx = idx;
+                });
+                if (countO === winSequenceLength - 1 && emptyIdx !== -1) return emptyIdx;
+            }
+
+            // 2. إغلاق الطريق أمام اللاعب X لمنعه من الفوز
+            for (let condition of winningConditions) {
+                let countX = 0, emptyIdx = -1;
+                condition.forEach(idx => {
+                    if (boardState[idx] === "X") countX++;
+                    else if (boardState[idx] === "") emptyIdx = idx;
+                });
+                if (countX === winSequenceLength - 1 && emptyIdx !== -1) return emptyIdx;
+            }
+
+            // 3. بناء هجوم (البحث عن خط يحتوي أكبر عدد من O)
+            for (let condition of winningConditions) {
+                let countO = 0, emptyIdxs = [];
+                condition.forEach(idx => {
+                    if (boardState[idx] === "O") countO++;
+                    else if (boardState[idx] === "") emptyIdxs.push(idx);
+                });
+                if (countO === winSequenceLength - 2 && emptyIdxs.length > 0) {
+                    return getRandomMove(emptyIdxs);
                 }
             }
-            if (!boardState.includes("")) return 'tie';
-            return null;
+
+            // 4. اختيار تحرك عشوائي متاح من الخانات الشاغرة
+            return getRandomMove(emptyIndices);
         }
 
         function updateScoreboard() {
@@ -437,22 +494,10 @@
             updateScoreboard();
         }
 
-        function restartGame() {
-            boardState = ["", "", "", "", "", "", "", "", ""];
-            currentPlayer = "X";
-            isGameActive = true;
-            statusText.innerHTML = `دور اللاعب: <span style="color:var(--accent-x); margin-right:5px;">X</span>`;
-            
-            cells.forEach(cell => {
-                cell.textContent = "";
-                cell.className = 'cell';
-            });
-        }
+        restartBtn.addEventListener('click', initGame);
 
-        cells.forEach(cell => cell.addEventListener('click', handleCellClick));
-        restartBtn.addEventListener('click', restartGame);
+        // البدء التلقائي عند التحميل
+        initGame();
     </script>
 </body>
 </html>
-
-
